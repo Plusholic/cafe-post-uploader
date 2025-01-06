@@ -24,53 +24,39 @@ function NaverCafePostForm() {
     
         try {
             const requestData = {
-                // ...formData,
-                user_id: 'test_user',
+                user_id: "test_user",
                 subject: "Test Subject",
-                content: "Test Content",
+                content: "Test Content"
             };
     
-            console.log('요청 URL:', 'https://xw5z1g65hc.execute-api.us-east-1.amazonaws.com/dev/post');
-            console.log('전송할 데이터:', requestData);
-            
+            // axios 기본 설정 변경
             const response = await axios({
                 method: 'post',
-                url: 'https://xw5z1g65hc.execute-api.us-east-1.amazonaws.com/dev/post',
+                url: '/prod/post',
                 data: requestData,
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Content-Type': 'application/json'
                 },
-                timeout: 5000  // 5초 타임아웃 설정
+                transformRequest: [
+                    (data) => JSON.stringify(data)  // 직접 JSON 문자열로 변환
+                ],
+                timeout: 10000
             });
     
-            console.log('응답:', response);
-                
+            console.log('서버 응답:', response);
+    
             if (response.status === 200) {
                 alert('글이 성공적으로 작성되었습니다!');
-                setFormData({
-                    subject: '',
-                    activity_type: '',
-                    date: '',
-                    participants: '',
-                    description: ''
-                });
+                setFormData({ /* 폼 초기화 */ });
             }
+    
         } catch (error) {
-            console.error('API 호출 에러:', error);
+            console.error('에러 전체 내용:', error);
             if (error.response) {
-                // 서버가 응답을 반환한 경우
                 console.error('에러 응답 데이터:', error.response.data);
-                console.error('에러 응답 상태:', error.response.status);
-                console.error('에러 응답 헤더:', error.response.headers);
-            } else if (error.request) {
-                // 요청은 보냈지만 응답을 받지 못한 경우
-                console.error('요청 객체:', error.request);
-            } else {
-                // 요청 설정 중에 문제가 발생한 경우
-                console.error('에러 메시지:', error.message);
+                console.error('요청 설정:', error.config);
             }
-            alert('글 작성에 실패했습니다: ' + (error.response?.data?.error || error.message));
+            alert(`글 작성에 실패했습니다. (${error.message})`);
         } finally {
             setIsLoading(false);
         }
