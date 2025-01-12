@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
 function NaverCafePostForm() {
@@ -11,6 +11,7 @@ function NaverCafePostForm() {
     });
     const [images, setImages] = useState([]); // 이미지 상태 추가
     const [isLoading, setIsLoading] = useState(false);
+    const fileInputRef = useRef(null);  // 파일 입력 필드 참조 추가
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -20,9 +21,14 @@ function NaverCafePostForm() {
         }));
     };
 
-    // 이미지 처리 함수 추가
+    // 이미지 처리 함수 수정
     const handleImageChange = async (e) => {
         const files = Array.from(e.target.files);
+        if (files.length === 0) {
+            setImages([]);
+            return;
+        }
+
         const imagePromises = files.map(file => {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -35,6 +41,21 @@ function NaverCafePostForm() {
         setImages(imageUrls);
     };
 
+    // 개별 이미지 삭제 함수
+    const removeImage = (index) => {
+        setImages(prev => prev.filter((_, i) => i !== index));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';  // 파일 입력 필드 초기화
+        }
+    };
+
+    // 모든 이미지 삭제 함수
+    const removeAllImages = () => {
+        setImages([]);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -159,26 +180,49 @@ ${images.map((_, index) => `<br><img src='#${index}' />`).join('')}
                 ></textarea>
             </div>
 
-            {/* 이미지 업로드 필드 추가 */}
-            <div className="mb-4">
+           {/* 이미지 업로드 필드 수정 */}
+           <div className="mb-4">
                 <label className="block mb-2">이미지 첨부</label>
-                <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                    className="w-full p-2 border rounded"
-                />
-                {/* 이미지 미리보기 */}
+                <div className="flex gap-2 items-center">
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageChange}
+                        className="flex-1 p-2 border rounded"
+                    />
+                    {images.length > 0 && (
+                        <button
+                            type="button"
+                            onClick={removeAllImages}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                            style={{ width: 'auto', minWidth: 'fit-content' }}
+                        >
+                            전체 삭제
+                        </button>
+                    )}
+                </div>
+
+                {/* 이미지 미리보기 수정 */}
                 {images.length > 0 && (
                     <div className="mt-2 grid grid-cols-2 gap-2">
                         {images.map((image, index) => (
-                            <img
-                                key={index}
-                                src={image}
-                                alt={`Preview ${index + 1}`}
-                                className="w-full h-32 object-cover rounded"
-                            />
+                            <div key={index} className="relative">
+                                <img
+                                    src={image}
+                                    alt={`Preview ${index + 1}`}
+                                    className="w-full h-32 object-cover rounded"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => removeImage(index)}
+                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                                    style={{ width: '24px', height: '24px', padding: 0 }}
+                                >
+                                    ×
+                                </button>
+                            </div>
                         ))}
                     </div>
                 )}
