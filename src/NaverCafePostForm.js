@@ -9,6 +9,7 @@ function NaverCafePostForm() {
         participants: '',
         description: ''
     });
+    const [images, setImages] = useState([]); // 이미지 상태 추가
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
@@ -18,18 +19,45 @@ function NaverCafePostForm() {
             [name]: value
         }));
     };
+
+    // 이미지 처리 함수 추가
+    const handleImageChange = async (e) => {
+        const files = Array.from(e.target.files);
+        const imagePromises = files.map(file => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+        });
+
+        const imageUrls = await Promise.all(imagePromises);
+        setImages(imageUrls);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
     
         try {
+            // 활동 내용 포맷팅
+            const formattedContent = `
+[활동 유형] : ${formData.activity_type}<br>
+[일시] : ${formData.date}<br>
+[참여자] : ${formData.participants}<br>
+[활동 내용]<br>
+---------------<br>
+${formData.description}
+${images.map((_, index) => `<br><img src='#${index}' />`).join('')}
+            `;
+
             const requestData = {
                 user_id: "test_user",
-                subject: "Test Subject",
-                content: "Test Content"
+                subject: formData.subject,
+                content: formattedContent,
+                images: images.map(img => img.split(',')[1]) // base64 데이터만 추출
             };
-    
-            // axios 기본 설정 변경
+
             const response = await axios({
                 method: 'post',
                 url: '/prod/post',
@@ -38,7 +66,7 @@ function NaverCafePostForm() {
                     'Content-Type': 'application/json'
                 },
                 transformRequest: [
-                    (data) => JSON.stringify(data)  // 직접 JSON 문자열로 변환
+                    (data) => JSON.stringify(data)
                 ],
                 timeout: 10000
             });
@@ -47,7 +75,14 @@ function NaverCafePostForm() {
     
             if (response.status === 200) {
                 alert('글이 성공적으로 작성되었습니다!');
-                setFormData({ /* 폼 초기화 */ });
+                setFormData({
+                    subject: '',
+                    activity_type: '',
+                    date: '',
+                    participants: '',
+                    description: ''
+                });
+                setImages([]); // 이미지도 초기화
             }
     
         } catch (error) {
@@ -61,6 +96,7 @@ function NaverCafePostForm() {
             setIsLoading(false);
         }
     };
+
     return (
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4">
             <div className="mb-4">
@@ -121,6 +157,31 @@ function NaverCafePostForm() {
                     rows="4"
                     required
                 ></textarea>
+            </div>
+
+            {/* 이미지 업로드 필드 추가 */}
+            <div className="mb-4">
+                <label className="block mb-2">이미지 첨부</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    className="w-full p-2 border rounded"
+                />
+                {/* 이미지 미리보기 */}
+                {images.length > 0 && (
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                        {images.map((image, index) => (
+                            <img
+                                key={index}
+                                src={image}
+                                alt={`Preview ${index + 1}`}
+                                className="w-full h-32 object-cover rounded"
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
 
             <button 
