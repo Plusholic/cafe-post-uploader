@@ -81,7 +81,8 @@ ${images.map((_, index) => `<br><img src='#${index}' />`).join('')}
 
             const response = await axios({
                 method: 'post',
-                url: '/prod/post',
+                // url: '/prod/post',
+                url: '/dev/post',
                 data: requestData,
                 headers: {
                     'Content-Type': 'application/json'
