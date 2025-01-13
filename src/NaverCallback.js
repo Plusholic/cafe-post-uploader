@@ -21,7 +21,8 @@ function NaverCallback() {
 
                 // OAuth 처리 API 호출
                 const response = await axios.post(
-                    `/dev/oauth/callback`,
+                    // `/dev/oauth/callback`,
+                    `/prod/oauth/callback`,
                     { code, state },
                     {
                         headers: {

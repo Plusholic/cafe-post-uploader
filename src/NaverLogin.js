@@ -9,7 +9,8 @@ function NaverLogin() {
        const params = {
            response_type: "code",
            client_id: "ANInyyXdRBw_CA2kVk8Z",
-           redirect_uri: "http://localhost:3000/naver/callback",
+          //  redirect_uri: "http://localhost:3000/naver/callback",
+           redirect_uri: "https://main.d36rgqn90fjue.amplifyapp.com/naver/callback",
            state: "RANDOM_STATE",
            scope: "cafe.write cafes"
        };
