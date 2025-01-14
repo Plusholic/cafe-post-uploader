@@ -10,7 +10,8 @@ function NaverLogin() {
            client_id: process.env.REACT_APP_NAVER_CLIENT_ID,
            redirect_uri: process.env.REACT_APP_REDIRECT_URI,
            state: "RANDOM_STATE",
-           scope: "cafe.write cafes"
+           scope: "cafe.write cafes",
+           auth_type: "reprompt"
        };
    
        // 네이버 로그인 페이지로 리다이렉트
