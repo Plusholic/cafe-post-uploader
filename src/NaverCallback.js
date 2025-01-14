@@ -18,11 +18,10 @@ function NaverCallback() {
                 if (!code || !state) {
                     throw new Error('필수 파라미터가 누락되었습니다.');
                 }
-
+                console.log('process.env.REACT_APP_API_ENDPOINT:', process.env.REACT_APP_API_ENDPOINT);
                 // OAuth 처리 API 호출
                 const response = await axios.post(
-                    // `/dev/oauth/callback`,
-                    `/prod/oauth/callback`,
+                    process.env.REACT_APP_API_ENDPOINT,
                     { code, state },
                     {
                         headers: {
@@ -36,16 +35,27 @@ function NaverCallback() {
 
                 if (response.status === 200) {
                     // 로그인 성공 시 /write 페이지로 이동
-                    navigate('/write');
+                    console.log('response.data:', response.data);
+                    if (response.data.userId) {
+                        console.log('userId:', response.data.userId);
+                        console.log('loginTime:', new Date().getTime());
+                        localStorage.setItem('userId', response.data.userId);
+                        localStorage.setItem('loginTime', new Date().getTime());
+                    }
+                    // navigate('/write');
+                    navigate('/write', { replace: true });
                 } else {
                     throw new Error('OAuth 처리 실패');
                 }
             } catch (error) {
                 console.error('OAuth 처리 중 에러:', error.message);
-
+                // localStorage 초기화
+                localStorage.removeItem('userId');
+                localStorage.removeItem('loginTime');
                 // 실패 시 메인 페이지로 리다이렉션 및 에러 메시지 표시
+                navigate('/', { replace: true });
                 alert('로그인 처리 중 문제가 발생했습니다. 다시 시도해주세요.');
-                navigate('/');
+                // navigate('/');
             }
         };
 

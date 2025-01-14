@@ -1,9 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import NaverCafePostForm from './NaverCafePostForm';
 import NaverCallback from './NaverCallback';
 import NaverLogin from './NaverLogin';
-import './styles.css';
+import './App.css';
 
 function App() {
  return (
@@ -20,6 +20,7 @@ function App() {
            <Route path="/" element={<NaverLogin />} /> {/* 첫 페이지를 로그인으로 */}
            <Route path="/write" element={<NaverCafePostForm />} /> {/* 글쓰기 페이지 */}
            <Route path="/naver/callback" element={<NaverCallback />} /> {/* 콜백 처리 */}
+           <Route path="*" element={<Navigate to="/" replace />} /> {/* 모든 경로 처리 */}
          </Routes>
        </div>
      </div>

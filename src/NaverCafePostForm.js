@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function NaverCafePostForm() {
     const [formData, setFormData] = useState({
@@ -12,7 +14,8 @@ function NaverCafePostForm() {
     const [images, setImages] = useState([]); // 이미지 상태 추가
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef(null);  // 파일 입력 필드 참조 추가
-
+    const userId = localStorage.getItem('userId');
+    const navigate = useNavigate();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -20,7 +23,12 @@ function NaverCafePostForm() {
             [name]: value
         }));
     };
-
+    useEffect(() => {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            navigate('/', { replace: true });
+        }
+    }, [navigate]);
     // 이미지 처리 함수 수정
     const handleImageChange = async (e) => {
         const files = Array.from(e.target.files);
@@ -71,9 +79,9 @@ function NaverCafePostForm() {
 ${formData.description}
 ${images.map((_, index) => `<br><img src='#${index}' />`).join('')}
             `;
-
+            
             const requestData = {
-                user_id: "test_user",
+                user_id: userId,
                 subject: formData.subject,
                 content: formattedContent,
                 images: images.map(img => img.split(',')[1]) // base64 데이터만 추출
