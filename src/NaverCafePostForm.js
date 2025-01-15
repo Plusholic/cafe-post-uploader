@@ -100,7 +100,7 @@ ${images.map((_, index) => `<br><img src='#${index}' />`).join('')}
                 ],
                 timeout: 10000
             });
-    
+
             console.log('서버 응답:', response);
     
             if (response.status === 200) {

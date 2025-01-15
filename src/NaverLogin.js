@@ -30,10 +30,11 @@ function NaverLogin() {
    return (
     <div className="min-h-screen">
         <div className="text-center flex flex-col items-center gap-4">
+
           <div className="w-12">
               <img 
-                  src="/logo.png" 
-                  alt="빛나는 책갈피 로고" 
+                  src="/login.jpeg" 
+                  alt="로그인 시 동의" 
                   className="w-full h-auto"
                   width="256"  // 픽셀 단위로 실제 렌더링 크기 지정
                   height="256" // 비율 유지를 위해 적절한 높이 설정
