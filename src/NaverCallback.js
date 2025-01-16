@@ -17,7 +17,7 @@ function NaverCallback() {
     
             try {
                 await new Promise(resolve => setTimeout(resolve, 3000));
-                
+
                 console.log('process.env.REACT_APP_API_ENDPOINT:', process.env.REACT_APP_API_ENDPOINT);
                 const response = await axios.post(
                     process.env.REACT_APP_API_ENDPOINT,
@@ -39,7 +39,7 @@ function NaverCallback() {
                         localStorage.setItem('userId', response.data.userId);
                         localStorage.setItem('loginTime', new Date().getTime());
                     }
-                    navigate('/write', { replace: true });
+                    navigate('/home', { replace: true });
                 }
             } catch (error) {
                 console.error('OAuth 처리 중 에러:', error.message);

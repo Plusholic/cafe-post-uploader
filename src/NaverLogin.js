@@ -10,7 +10,7 @@ function NaverLogin() {
            client_id: process.env.REACT_APP_NAVER_CLIENT_ID,
            redirect_uri: process.env.REACT_APP_REDIRECT_URI,
            state: "RANDOM_STATE",
-           scope: "cafe.write cafes",
+           scope: "cafe.write cafes calendar",
            auth_type: "reprompt"
        };
    
@@ -23,7 +23,7 @@ function NaverLogin() {
        // 이미 로그인된 상태면 write 페이지로 리다이렉트
        const userId = localStorage.getItem('userId');
        if (userId) {
-           navigate('/write', { replace: true }); // replace: true로 히스토리 대체
+           navigate('/home', { replace: true }); // replace: true로 히스토리 대체
        }
    }, [navigate]);
 
